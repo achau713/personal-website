@@ -1,7 +1,6 @@
 ---
-date: "2020-06-06"
-title: Test post
-slug: test
+date: "2020-06-08"
+title: About Anthony Chau
 ---
 
-Welcome to my blog!
+Anthony Chau is a Reasearch Analyst at the University of California, Irvine.
