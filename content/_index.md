@@ -1,1 +1,5 @@
-This is a sample title.
+---
+title: Home
+---
+
+Welcome home
