@@ -1,17 +1,16 @@
 baseurl = "/"
 languageCode = "en-us"
-title = "Anthony's blog"
+title = "A minimal Hugo website"
 theme = "hugo-xmin"
 googleAnalytics = ""
 disqusShortname = ""
-enableEmoji = true
 ignoreFiles = ["\\.Rmd$", "\\.Rmarkdown$", "_files$", "_cache$"]
 footnotereturnlinkcontents = "↩"
 
 [permalinks]
-    post = "/:year/:month/:day/:slug/"
+    post = "/post/:year/:month/:day/:slug/"
     note = "/note/:year/:month/:day/:slug/"
-    
+
 [[menu.main]]
     name = "Home"
     url = "/"
@@ -28,10 +27,10 @@ footnotereturnlinkcontents = "↩"
     name = "Tags"
     url = "/tags/"
     weight = 4
+[[menu.main]]
+    name = "Subscribe"
+    url = "/index.xml"
 
 [params]
-    description = "Blog sharing about statistics, programming, food, and more"
-
-
-
-
+    description = "A website built through Hugo and blogdown."
+    footer = "&copy; [Yihui Xie](https://yihui.name) 2017 -- 2019 | [Github](https://github.com/yihui) | [Twitter](https://twitter.com/xieyihui)"
