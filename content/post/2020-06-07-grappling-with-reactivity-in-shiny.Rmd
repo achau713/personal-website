@@ -1,0 +1,76 @@
+---
+title: Grappling with Reactivity in Shiny
+author: Anthony Chau
+date: '2020-06-07'
+slug: grappling-with-reactivity-in-shiny
+categories:
+  - notes
+tags:
+  - R
+  - Shiny
+---
+
+# Naive Reactivity
+
+I've been working on a Shiny app at work for a few months now and have been exploring the concept of *reactivity*.
+Intuitively, *reactivity* is how your Shiny app reacts to changes in user input. For example, suppose you have a simple shiny app which displays a histogram of some variable. It is reasonable that a user should be able to select what variable they want to view and this would be reflected in the histogram. At its core, this is what *reactivity* is: how does my app change when a user interacts with it. 
+
+
+# Precise control
+
+## Big overhead
+
+However, as I played with Shiny more and thought more about my use case, I needed some finer control over the *reactivity*.  The main issue I faced:  when is the appropriate time to call the API to pull data. I had a shiny app where users can select specific projects from a database. However, the stored datasets were quite large and had thousands of variables. This slowed down the app tremendously, as each time the user selects or deselects a dataset, the API would fire and attempt to pull the data for viewing in the app. The app was very slow....
+
+Another downside to this setup is in terms of functionality: is viewing large datasets that useful to users? What information could you really extract by sifting through columns and columns of data interactively? Not much. So I changed the app logic so that the full dataset still pulled in the background but it would not be displayed to users verbatim.
+
+## Too many variables
+
+After this, I needed to implement an input box for users to select variables they wanted to query. Simple enough. However, I thought about the data requests I have received and noticed that the requested variables usually have a common phrase in the variable names. It would be unwieldy and tedious for users to manually select variables using Shiny's built in select input classes. Therefore, I thought that solving this problem with a text box where users can type in regex would be appropriate. Of course, this comes at the cost of educating users about regex so that they can use the application to its full potential.
+
+The text box solution with typed-in regex is easy to implement on the UI side. But, I had to be more careful on the server side. I did not want the API to fire whenever users type or delete something intermittently. This would slow the app down, perhaps even more so than simply selecting datasets because of how active the process it. Therefore, I needed to setup the app logic so I only make a API request when I actually need it. 
+
+My solution to this was to add a button that users can click after they have selected the appropriate datasets and filtered for the desired variables. Again, the user interface layer is easy to implement but I had to be more careful on the server side. I would need to test the app constantly to determine if it was behaving in ways I expected it to.
+
+Here is some sample code below.
+
+```{r, eval = FALSE}
+
+
+PullData <- function(input, output, session){
+  data <- shiny::reactive({
+    # some code to pull data from an API
+  })
+  
+  return(data)
+}
+
+
+FilterData <- function(input, output, session, api_data){
+  
+  # log query search to console only when query button is pressed
+  observeEvent(input$queryButton, {
+    cat("Searched for:", input$regex, "\n")
+  })
+    
+  
+  # filter raw data by user-inputted regex
+  filteredData <- eventReactive(input$queryButton, {
+    req(input$regex)
+    select(api_data(), matches(input$regex))
+  })
+  
+  return(filteredData)
+}
+
+
+
+
+```
+
+Essentially, the app only makes an API call when the button (input$queryButton) is pressed. Users can select datasets and type in regex freely, without any slow side-effects. When they are finished with their selections, they can click the button to pull the filtered data. Another benefit to this setup is that there is new API call when the user changes the regex query. The user can type in another query and the app will just filter the cached dataset without calling the API again. These two features improves the app performance tremendously.
+
+# Future Work
+
+I'm working on a solution to select variables from different datasets and to merge the datasets together for users to download. Also, I plan to implement a username and password system for security. 
+
