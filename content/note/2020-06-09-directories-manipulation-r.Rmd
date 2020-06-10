@@ -1,0 +1,45 @@
+---
+title: Directory manipulation with R
+author: Anthony Chau
+date: '2020-06-09'
+slug: directories-manipulation-R
+categories:
+  - R
+tags:
+  - reproducible research
+---
+
+Quick note about directories with base R. 
+
+# Check if a directory exists
+
+We use the **dir.exists()** function. **dir.exists()** takes as input, a path to a directory, specified as a character string. You can also specify multiple paths in a single character vector. The function will return a boolean indicating if the directory exists.  
+```{r, eval = FALSE}
+
+dir.exists("path/to/dir")
+
+# can specific multiple paths
+
+dir_paths <- c("path/to/dir1", "path/to/dir2")
+
+dir.exists(dir_paths)
+
+
+```
+
+
+# Create a directory.
+
+We use the **dir.create()** function. **dir.create()** takes as input, a path to a direcotyr specified as a character string. We cannot supply multiple character vectors to  **dir.create()**.
+```{r, eval = FALSE}
+
+# create a new directory in the current directory
+dir.create("new_dir")
+
+# create a new sub-directory in the new_dir
+dir.create("new_dir/sub_dir")
+
+# doesnt' work
+dir.create(c("new-dir1", "new-dir2"))
+```
+

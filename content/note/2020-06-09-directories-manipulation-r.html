@@ -1,0 +1,37 @@
+---
+title: Directory manipulation with R
+author: Anthony Chau
+date: '2020-06-09'
+slug: directories-manipulation-R
+categories:
+  - R
+tags:
+  - reproducible research
+---
+
+
+
+<p>Quick note about directories with base R.</p>
+<div id="check-if-a-directory-exists" class="section level1">
+<h1>Check if a directory exists</h1>
+<p>We use the <strong>dir.exists()</strong> function. <strong>dir.exists()</strong> takes as input, a path to a directory, specified as a character string. You can also specify multiple paths in a single character vector. The function will return a boolean indicating if the directory exists.</p>
+<pre class="r"><code>dir.exists(&quot;path/to/dir&quot;)
+
+# can specific multiple paths
+
+dir_paths &lt;- c(&quot;path/to/dir1&quot;, &quot;path/to/dir2&quot;)
+
+dir.exists(dir_paths)</code></pre>
+</div>
+<div id="create-a-directory." class="section level1">
+<h1>Create a directory.</h1>
+<p>We use the <strong>dir.create()</strong> function. <strong>dir.create()</strong> takes as input, a path to a direcotyr specified as a character string. We cannot supply multiple character vectors to <strong>dir.create()</strong>.</p>
+<pre class="r"><code># create a new directory in the current directory
+dir.create(&quot;new_dir&quot;)
+
+# create a new sub-directory in the new_dir
+dir.create(&quot;new_dir/sub_dir&quot;)
+
+# doesnt&#39; work
+dir.create(c(&quot;new-dir1&quot;, &quot;new-dir2&quot;))</code></pre>
+</div>
