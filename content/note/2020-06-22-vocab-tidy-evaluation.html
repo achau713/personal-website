@@ -1,0 +1,101 @@
+---
+title: Vocabulary of Tidy Evaluation
+author: Anthony Chau
+date: '2020-06-22'
+slug: voacbulary-tidy-evaluation
+categories:
+  - notes
+  - tidyverse
+tags:
+  - R
+---
+
+
+
+<p>After struggling how to program with dplyr, I decided it would be best to write a blog post about it. These notes are referenced from this <a href="https://github.com/rstudio/cheatsheets/blob/master/tidyeval.pdf">cheatsheet</a></p>
+<div id="fundamental-terminology" class="section level3">
+<h3>Fundamental terminology:</h3>
+<ul>
+<li><strong>Symbol:</strong> a name that represents a value or object stored in R
+<ul>
+<li>For example, take <code>a = 3, num_missing = sum(is.na)</code>.</li>
+<li><code>a</code>, and <code>num_missing</code> are symbols.</li>
+</ul></li>
+<li><strong>Expression:</strong> an object that stores quoted code without evaulating it
+<ul>
+<li>Think about in terms of mathematical equations. Many times when we do proofs, we do it by manipulating expressions only. For example, take the derivation to estimate the parameters for least squares.</li>
+</ul></li>
+</ul>
+<p>In the example below, we capture the expression <code>a + b</code>. It doesn’t matter if we defined symbols <code>a</code> and <code>b</code> before.</p>
+<pre class="r"><code>c &lt;- rlang::expr(a + b)
+c</code></pre>
+<pre><code>&gt; a + b</code></pre>
+<ul>
+<li><strong>Constant:</strong> a bare value
+<ul>
+<li>Bare objects have no class attribute</li>
+<li>We give examples of constants: numeric, chracter, and logical vectors as well as lists.</li>
+<li>We demonstrate that a data frame is not bare because it has class attributes</li>
+</ul></li>
+</ul>
+<pre class="r"><code># no attributes
+attributes(1)</code></pre>
+<pre><code>&gt; NULL</code></pre>
+<pre class="r"><code>attributes(&quot;1&quot;)</code></pre>
+<pre><code>&gt; NULL</code></pre>
+<pre class="r"><code>attributes(TRUE)</code></pre>
+<pre><code>&gt; NULL</code></pre>
+<pre class="r"><code>attributes(list(1, 2, 3))</code></pre>
+<pre><code>&gt; NULL</code></pre>
+<pre class="r"><code># data frame is not bare 
+# it has attributes
+attributes(data.frame(x = c(1,3)))</code></pre>
+<pre><code>&gt; $names
+&gt; [1] &quot;x&quot;
+&gt; 
+&gt; $class
+&gt; [1] &quot;data.frame&quot;
+&gt; 
+&gt; $row.names
+&gt; [1] 1 2</code></pre>
+<ul>
+<li><strong>Environment:</strong> A context to store bindings between symbols to objects.</li>
+</ul>
+<p>Below, we have introduced two new bindings to the global environment. We bind the symbol <code>a</code> to the constant 1 and the symbol <code>b</code> to the constant “hello”. And, objects <code>a</code> and <code>b</code> are now objects in memory within the global environment</p>
+<pre class="r"><code>a &lt;- 1
+b &lt;- &quot;hello&quot;</code></pre>
+<ul>
+<li><p><strong>Call object:</strong> a vector of symbols, constants, and calls that begin with a function name, possibly with arguments.</p>
+<ul>
+<li><code>sum(1, 2)</code> is the call object</li>
+<li><code>min(c(1, 3, 4))</code> is the call object</li>
+</ul></li>
+<li><p><strong>Code:</strong> a sequence of symbols, constants, and calls that will return a result if evaluated</p>
+<ul>
+<li><code>sum(1 + 2)</code> is code. Notice how it is made up of symbols, constants, and calls</li>
+<li><code>3</code> is the result.</li>
+</ul></li>
+</ul>
+<pre class="r"><code>sum(1 + 2)</code></pre>
+<pre><code>&gt; [1] 3</code></pre>
+<ul>
+<li><p><strong>Standard Evaluation:</strong> Code evaluation is immediate</p></li>
+<li><p><strong>Non-Standard Evaluation:</strong> Code evalulation is delayed</p>
+<ul>
+<li>The code is quoted with intent to evaluate later</li>
+</ul></li>
+<li><p><strong>Quotation:</strong> The act of storing an expression without evaluating it</p>
+<ul>
+<li><code>rlang::expr(lm(y ~ x))</code></li>
+<li><code>rlang::expr</code> stores the expression but doesn’t evaluate it</li>
+</ul></li>
+<li><p><strong>Unquotation:</strong> The act of evaluating an expression</p>
+<ul>
+<li>In rlang, you can use <code>!!</code>, <code>!!!</code>, or <code>:=</code> to unquote.</li>
+<li><code>!!</code> unquotes the symbol or call that follows</li>
+<li><code>!!!</code> is used with vectors and lists. It unpacks its results as arguments to a call.</li>
+<li><code>:=</code> allows for unquoting of symbols (names) on the left hand side of an <code>=</code> assignment</li>
+</ul></li>
+<li><p><strong>Quasiquotation:</strong> The act of quoting some parts of an expression and evaluating other parts of an expression, by inserting in the evaluated result of the expression</p></li>
+</ul>
+</div>
