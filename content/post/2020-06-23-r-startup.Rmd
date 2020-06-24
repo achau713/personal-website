@@ -1,0 +1,66 @@
+---
+title: R Startup
+author: Anthony Chau
+date: '2020-06-23'
+slug: r-startup
+categories:
+  - notes
+tags:
+  - R
+---
+
+## Some Background:
+
+This post outlines what happens behind the scenes before a new R session is loaded. Note that this post does not go intofine detail about everything that happens. More details can found by typing `?Startup`.
+
+We focus on variations of `Rprofile` and `Renviron` files that are crucial to the R Startup process. Respectively, these file store R code and environment variables.
+
+The effect of these files will have a different scope that depends on where they are stored. There are three scopes: system, user, and project level. We discuss each scope below. 
+
+## Scopes
+
+### System Level
+
+At the system level, we create `Rprofile.site` and `Renviron.site` files. They must have this exact naming. These files are specific to a version of R and affect all users. 
+
+We store these system level files in a subdirectory of the R home directory. You can find the path to the R home directory by typing `Sys.getenv("R_HOME")` in the R console. On windows, the path will typically look like: `C:\Program Files\R\R-4.0.1`.
+
+Now, we actually store `Rprofile.site` and `Renviron.site` in the `etc` subdirectory of `$R_HOME`.
+
+
+### User level
+
+At the user level, we create `.Rprofile` and `.Renviron` files. These files affect only 1 user.
+
+We store these files in the base of a user's home directory. I know I have been confused by what is meant by a "home directory". It is an ambiguous term, especially on Windows. But, this [document](https://cran.r-project.org/bin/windows/base/rw-FAQ.html#What-are-HOME-and-working-directories_003f) clarifies on this notion.
+
+Below is the ordered process R uses to set your home directory on Windows:
+
+1. Value of `Sys.getenv("R_USER")`
+2. Value of `Sys.getenv("HOME")`
+3. Use Windows personal directory. Typically: `C:\Users\username\Documents`
+4. Set to `${HOMEDRIVE}${HOMEPATH}` if both Windows environment variables are set.
+5. Current working directory
+
+
+### Project Level
+
+At the project level, we create `.Rprofile` and `.Renviron` files. These files only affect 1 project
+
+We store these files in the base of a project directory. For context, a project directory results from creating a R project within RStudio. That is, project directories contain a `.Rroj` file. 
+
+
+## Extra notes
+- If there are system level files, they will always be loaded.
+- If there are both user and project level files, __only the project level file__ will be loaded.
+- So at most, only a system level file and either a user _or_ project level file will be loaded.
+- Do NOT edit the `Renviron` file at `$R_HOME/etc`
+- Do not put R code in any `Renviron` files. These text files will only contain text of the form `NAME_OF_ENV_VAR=VALUE`
+
+## References/resources on R Startup
+
+- [Alex Gold's article](https://support.rstudio.com/hc/en-us/articles/360047157094-Managing-R-with-Rprofile-Renviron-Rprofile-site-Renviron-site-rsession-conf-and-repos-conf)
+- [Sean Lopp's article](https://rviews.rstudio.com/2017/04/19/r-for-enterprise-understanding-r-s-startup/)
+- [R Startup Docs](https://stat.ethz.ch/R-manual/R-devel/library/base/html/Startup.html)
+- [Kevin Ushey on Rprofile files](http://kevinushey.github.io/blog/2015/02/02/rprofile-essentials/)
+

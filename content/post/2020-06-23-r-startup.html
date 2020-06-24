@@ -1,0 +1,65 @@
+---
+title: R Startup
+author: Anthony Chau
+date: '2020-06-23'
+slug: r-startup
+categories:
+  - notes
+tags:
+  - R
+---
+
+
+
+<div id="some-background" class="section level2">
+<h2>Some Background:</h2>
+<p>This post outlines what happens behind the scenes before a new R session is loaded. Note that this post does not go intofine detail about everything that happens. More details can found by typing <code>?Startup</code>.</p>
+<p>We focus on variations of <code>Rprofile</code> and <code>Renviron</code> files that are crucial to the R Startup process. Respectively, these file store R code and environment variables.</p>
+<p>The effect of these files will have a different scope that depends on where they are stored. There are three scopes: system, user, and project level. We discuss each scope below.</p>
+</div>
+<div id="scopes" class="section level2">
+<h2>Scopes</h2>
+<div id="system-level" class="section level3">
+<h3>System Level</h3>
+<p>At the system level, we create <code>Rprofile.site</code> and <code>Renviron.site</code> files. They must have this exact naming. These files are specific to a version of R and affect all users.</p>
+<p>We store these system level files in a subdirectory of the R home directory. You can find the path to the R home directory by typing <code>Sys.getenv("R_HOME")</code> in the R console. On windows, the path will typically look like: <code>C:\Program Files\R\R-4.0.1</code>.</p>
+<p>Now, we actually store <code>Rprofile.site</code> and <code>Renviron.site</code> in the <code>etc</code> subdirectory of <code>$R_HOME</code>.</p>
+</div>
+<div id="user-level" class="section level3">
+<h3>User level</h3>
+<p>At the user level, we create <code>.Rprofile</code> and <code>.Renviron</code> files. These files affect only 1 user.</p>
+<p>We store these files in the base of a user’s home directory. I know I have been confused by what is meant by a “home directory”. It is an ambiguous term, especially on Windows. But, this <a href="https://cran.r-project.org/bin/windows/base/rw-FAQ.html#What-are-HOME-and-working-directories_003f">document</a> clarifies on this notion.</p>
+<p>Below is the ordered process R uses to set your home directory on Windows:</p>
+<ol style="list-style-type: decimal">
+<li>Value of <code>Sys.getenv("R_USER")</code></li>
+<li>Value of <code>Sys.getenv("HOME")</code></li>
+<li>Use Windows personal directory. Typically: <code>C:\Users\username\Documents</code></li>
+<li>Set to <code>${HOMEDRIVE}${HOMEPATH}</code> if both Windows environment variables are set.</li>
+<li>Current working directory</li>
+</ol>
+</div>
+<div id="project-level" class="section level3">
+<h3>Project Level</h3>
+<p>At the project level, we create <code>.Rprofile</code> and <code>.Renviron</code> files. These files only affect 1 project</p>
+<p>We store these files in the base of a project directory. For context, a project directory results from creating a R project within RStudio. That is, project directories contain a <code>.Rroj</code> file.</p>
+</div>
+</div>
+<div id="extra-notes" class="section level2">
+<h2>Extra notes</h2>
+<ul>
+<li>If there are system level files, they will always be loaded.</li>
+<li>If there are both user and project level files, <strong>only the project level file</strong> will be loaded.</li>
+<li>So at most, only a system level file and either a user <em>or</em> project level file will be loaded.</li>
+<li>Do NOT edit the <code>Renviron</code> file at <code>$R_HOME/etc</code></li>
+<li>Do not put R code in any <code>Renviron</code> files. These text files will only contain text of the form <code>NAME_OF_ENV_VAR=VALUE</code></li>
+</ul>
+</div>
+<div id="referencesresources-on-r-startup" class="section level2">
+<h2>References/resources on R Startup</h2>
+<ul>
+<li><a href="https://support.rstudio.com/hc/en-us/articles/360047157094-Managing-R-with-Rprofile-Renviron-Rprofile-site-Renviron-site-rsession-conf-and-repos-conf">Alex Gold’s article</a></li>
+<li><a href="https://rviews.rstudio.com/2017/04/19/r-for-enterprise-understanding-r-s-startup/">Sean Lopp’s article</a></li>
+<li><a href="https://stat.ethz.ch/R-manual/R-devel/library/base/html/Startup.html">R Startup Docs</a></li>
+<li><a href="http://kevinushey.github.io/blog/2015/02/02/rprofile-essentials/">Kevin Ushey on Rprofile files</a></li>
+</ul>
+</div>
