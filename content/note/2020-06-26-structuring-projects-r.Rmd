@@ -121,3 +121,8 @@ Now, to discuss each component in the template.
   - Remember that when you knit something, it gets executed in a new environment.
   - The key rule to keep in mind is: everything must be defined with a chunk. 
   - Objects must be defined in a previous chunk if they are used in a future chunk.
+  
+  
+## More thoughts on the subject
+1. [Iegor's article](https://www.r-bloggers.com/%F0%9F%93%81-project-oriented-workflow/)
+2. [Chris's article](https://www.r-bloggers.com/structuring-r-projects/)
