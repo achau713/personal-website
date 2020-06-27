@@ -1,0 +1,159 @@
+---
+title: Structuring projects in R
+author: Anthony Chau
+date: '2020-06-26'
+slug: structuring-projects-r
+categories:
+  - R
+  - notes
+tags:
+  - reproducible research
+  - data science
+---
+
+
+
+<p>As the projects you work on become more complicated, intuitive organization and clear documentation will be paramount. By planning out the structure of your project before doing all the heavy work, you save yourself the headache of reorganizing files and folders in the long run. Save yourself time by putting an upfront heavy investment into organization.</p>
+<div id="sample-data-science-project-layout" class="section level2">
+<h2>Sample Data Science project layout</h2>
+<p>The majority of my work is done leveraging R within RStudio. So, this project structure will be skewed toward R users. However, I suppose most of this has similar mappings to other common programming languages used in data science.</p>
+<pre><code>project_name/
+|- project_name.Rproj
+|- renv.lock
+|- .gitignore
+|- .Rprofile
+|- .Renviron
+|- README.md
+|- clean.R
+|- eda.R
+|- analyze.R
+|  data/
+|  | raw/
+|  | processed/
+|  scripts/
+|  | eda/
+|  | clean/
+|  | analyze/
+|  | utils.R
+|  docs/
+|  renv/
+|  figures/
+|  reports/</code></pre>
+<p>Purposely, the project structure is rather extensive. Your project will probably be some variation of a subset of the above.</p>
+<p>Now, to discuss each component in the template.</p>
+<div id="project_name.rproj" class="section level3">
+<h3>project_name.Rproj</h3>
+<ul>
+<li>A <code>Rproj</code> file indicates that you are using a R Studio project.</li>
+<li>By using a R Studio project, you ensure that all your projects are contained and isolated from each other.</li>
+</ul>
+</div>
+<div id="renv.lock" class="section level3">
+<h3>renv.lock</h3>
+<ul>
+<li>Use the <code>renv</code> package for dependency management.</li>
+<li>The lock file stores all your package dependencies in a JSON format for your project.</li>
+<li>More info on the <a href="https://rstudio.github.io/renv/index.html">renv package</a></li>
+</ul>
+</div>
+<div id="gitignore" class="section level3">
+<h3>.gitignore</h3>
+<ul>
+<li>The <code>.gitignore</code> file specifies which files and directories to ignore and not track under version control.</li>
+<li>Use version control to track changes to your project over time and to have the option of “rolling bacK” if something breaks or if a collaborator points out a mistake/error.</li>
+</ul>
+</div>
+<div id="rprofile" class="section level3">
+<h3>.Rprofile</h3>
+<ul>
+<li>Store any R code that you want to run before your R session loads up.</li>
+<li>Be careful with this file if you put it in <code>.gitignore</code>.</li>
+<li>You don’t want to include anything that affects how your code runs. This hinders reproducibility.</li>
+</ul>
+</div>
+<div id="renviron" class="section level3">
+<h3>.Renviron</h3>
+<ul>
+<li>Store environment variables before your R session loads up.</li>
+<li>Usually meant for secret API keys.</li>
+<li>If storing API keys, put <code>.Renviron</code> in your <code>.gitignore</code> file.</li>
+<li>Specify to other users how to obtain their own API keys and include a sample configuration file.</li>
+</ul>
+</div>
+<div id="readme.md" class="section level3">
+<h3>README.md</h3>
+<ul>
+<li>Place to describe your project: what is the goal, how do you run it, how to contribute, licenses</li>
+</ul>
+</div>
+<div id="clean.r-eda.r-analyze.r" class="section level3">
+<h3>clean.R, eda.R, analyze.R</h3>
+<ul>
+<li>Include top-level R scripts which execute and orchestrate all your scripts within the <code>scripts/</code> directory.</li>
+<li>Users can just source one script to complete an overall task</li>
+<li>Include informative print messages to aid in debugging</li>
+<li>Include checks and tests:
+<ul>
+<li>Ask the user if it is their first time opening the project. If yes, initialize with <code>renv</code>. If not, skip.</li>
+<li>Check for the existence of a <code>data/</code> directory. Relevant if you can’t include the data on a cloud code-repository service.</li>
+<li>Check if environment variables (API keys) have been specified</li>
+</ul></li>
+<li>Perhaps, you can also have a <code>master.R</code> script which runs all three top-level scripts.</li>
+<li>The goal is to make it as easy as possible for users to run and reproduce your work.</li>
+</ul>
+</div>
+<div id="data" class="section level3">
+<h3>data/</h3>
+<ul>
+<li>Store raw data assets in <code>data/raw/</code></li>
+<li>Raw data is any data “read” in either from a csv, xlsx, remote database, json, etc.</li>
+<li>Store processed data assets in <code>data/processed/</code>.</li>
+<li>Processed data has been manipulated by scripts within the project.</li>
+<li>You may include this directory in <code>.gitignore</code> for security or bureaucratic reasons</li>
+</ul>
+</div>
+<div id="scripts" class="section level3">
+<h3>scripts/</h3>
+<ul>
+<li>Group R scripts which do a similar function into sub directories of <code>scripts/</code></li>
+<li>The <code>utils.R</code> defines any functions that you use in your scripts.</li>
+<li>Seperate the definition of your functions from the implemetation.</li>
+<li>You can even have individual <code>{task}-utils.R</code> files within the sub directories of <code>scripts/</code>. Then, <code>utils.R</code> will only contain general functions that apply to all tasks</li>
+</ul>
+</div>
+<div id="docs" class="section level3">
+<h3>docs/</h3>
+<ul>
+<li>Store any notes or lower-level documentation as <code>.md</code> files.</li>
+</ul>
+</div>
+<div id="renv" class="section level3">
+<h3>renv/</h3>
+<ul>
+<li><code>renv</code> will create this directory for you.</li>
+<li>Houses some internal files to <code>renv</code> and also stores packages local to your project.</li>
+<li>This is usually included in <code>.gitignore</code> so it doesn’t bloat the project</li>
+</ul>
+</div>
+<div id="figures" class="section level3">
+<h3>figures/</h3>
+<ul>
+<li>Stores any plots and figures generated during the project</li>
+<li>Easy access to use in external reports or to send “as-is” figures</li>
+</ul>
+</div>
+<div id="reports" class="section level3">
+<h3>reports/</h3>
+<ul>
+<li>Stores <code>.Rmd</code> files, interweaving code and text.</li>
+<li>Document your thought process during data cleaning and data analysis.</li>
+<li>Be careful and clear about the dependencies needed for reports. That is, what scripts need to be executed to generate the intended report.
+<ul>
+<li>You might be surprised if you knit the report and you get <code>Error: object {BUT_IT_IS_DEFINED!} not found</code></li>
+<li>Remember that when you knit something, it gets executed in a new environment.</li>
+<li>The key rule to keep in mind is: everything must be defined with a chunk.</li>
+<li>Objects must be defined in a previous chunk if they are used in a future chunk.</li>
+</ul></li>
+</ul>
+</div>
+</div>

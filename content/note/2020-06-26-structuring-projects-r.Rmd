@@ -1,0 +1,123 @@
+---
+title: Structuring projects in R
+author: Anthony Chau
+date: '2020-06-26'
+slug: structuring-projects-r
+categories:
+  - R
+  - notes
+tags:
+  - reproducible research
+  - data science
+---
+
+
+As the projects you work on become more complicated, intuitive organization and clear documentation will be paramount. By planning out the structure of your project before doing all the heavy work, you save yourself the headache of reorganizing files and folders in the long run. Save yourself time by putting an upfront heavy investment into organization.
+
+
+## Sample Data Science project layout
+
+The majority of my work is done leveraging R within RStudio. So, this project structure will be skewed toward R users. However, I suppose most of this has similar mappings to other common programming languages used in data science. 
+
+```
+project_name/
+|- project_name.Rproj
+|- renv.lock
+|- .gitignore
+|- .Rprofile
+|- .Renviron
+|- README.md
+|- clean.R
+|- eda.R
+|- analyze.R
+|  data/
+|  | raw/
+|  | processed/
+|  scripts/
+|  | eda/
+|  | clean/
+|  | analyze/
+|  | utils.R
+|  docs/
+|  renv/
+|  figures/
+|  reports/
+```
+
+Purposely, the project structure is rather extensive. Your project will probably be some variation of a subset of the above.
+
+Now, to discuss each component in the template.
+
+### project_name.Rproj
+
+- A `Rproj` file indicates that you are using a R Studio project. 
+- By using a R Studio project, you ensure that all your projects are contained and isolated from each other. 
+
+### renv.lock
+- Use the `renv` package for dependency management. 
+- The lock file stores all your package dependencies in a JSON format for your project.
+- More info on the [renv package](https://rstudio.github.io/renv/index.html)
+
+### .gitignore
+- The `.gitignore` file specifies which files and directories to ignore and not track under version control.
+- Use version control to track changes to your project over time and to have the option of "rolling bacK" if something breaks or if a collaborator points out a mistake/error. 
+
+### .Rprofile
+- Store any R code that you want to run before your R session loads up. 
+- Be careful with this file if you put it in `.gitignore`. 
+- You don't want to include anything that affects how your code runs. This hinders reproducibility.
+
+### .Renviron
+- Store environment variables before your R session loads up.
+- Usually meant for secret API keys. 
+- If storing API keys, put `.Renviron` in your `.gitignore` file.
+- Specify to other users how to obtain their own API keys and include a sample configuration file.
+
+### README.md
+- Place to describe your project: what is the goal, how do you run it, how to contribute, licenses
+
+### clean.R, eda.R, analyze.R
+- Include top-level R scripts which execute and orchestrate all your scripts within the `scripts/` directory. 
+- Users can just source one script to complete an overall task
+- Include informative print messages to aid in debugging
+- Include checks and tests:
+  - Ask the user if it is their first time opening the project. If yes, initialize with `renv`. If not, skip.
+  - Check for the existence of a `data/` directory. Relevant if you can't include the data on a cloud code-repository service.
+  - Check if environment variables (API keys) have been specified
+- Perhaps, you can also have a `master.R` script which runs all three top-level scripts.
+- The goal is to make it as easy as possible for users to run and reproduce your work.
+
+
+### data/
+- Store raw data assets in `data/raw/`
+- Raw data is any data "read" in either from a csv, xlsx, remote database, json, etc.
+- Store processed data assets in `data/processed/`. 
+- Processed data has been manipulated by scripts within the project.
+- You may include this directory in `.gitignore` for security or bureaucratic reasons
+
+### scripts/
+- Group R scripts which do a similar function into sub directories of `scripts/`
+- The `utils.R` defines any functions that you use in your scripts.
+- Seperate the definition of your functions from the implemetation.
+- You can even have individual `{task}-utils.R` files within the sub directories of `scripts/`. Then, `utils.R` will only contain general functions that apply to all tasks
+
+### docs/
+- Store any notes or lower-level documentation as `.md` files.
+
+### renv/
+- `renv` will create this directory for you.
+- Houses some internal files to `renv` and also stores packages local to your project.
+- This is usually included in `.gitignore` so it doesn't bloat the project
+
+### figures/
+- Stores any plots and figures generated during the project
+- Easy access to use in external reports or to send "as-is" figures
+
+### reports/
+- Stores `.Rmd` files, interweaving code and text.
+- Document your thought process during data cleaning and data analysis.
+- Be careful and clear about the dependencies needed for reports. That is, what scripts need to be executed to generate the intended report.
+  - You might be surprised if you knit the report and you get `Error: object {BUT_IT_IS_DEFINED!} not found`
+  - Remember that when you knit something, it gets executed in a new environment.
+  - The key rule to keep in mind is: everything must be defined with a chunk. 
+  - Objects must be defined in a previous chunk if they are used in a future chunk.
