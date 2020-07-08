@@ -20,17 +20,18 @@ footnotereturnlinkcontents = "↩"
     url = "/about/"
     weight = 2
 [[menu.main]]
-    name = "Categories"
-    url = "/categories/"
-    weight = 3
-[[menu.main]]
     name = "Tags"
     url = "/tags/"
+    weight = 3
+[[menu.main]]
+    name = "Resources"
+    url = "/resources/"
     weight = 4
 [[menu.main]]
     name = "UCI Center for Statistical Consulting"
     url = "https://statconsulting.uci.edu/"
     weight = 5
+
 
 [params]
     description = "A blog website discussing statistics, mathematics, pedagogy, food, and more"
